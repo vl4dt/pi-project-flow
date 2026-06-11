@@ -82,7 +82,8 @@ Start here if you are new to the stack:
 
 - [Beginner Guide](docs/BEGINNER-GUIDE.md) - what each component does and the first-session flow.
 - [Component Reference](docs/COMPONENTS.md) - Pi, project-flow, WorkGraph, beads, git/tests, and grill skills.
-- [Tutorial: First Feature](docs/TUTORIAL-FIRST-FEATURE.md) - complete walkthrough from idea to handoff.
+- [Tutorial: New Project from Grilled Idea to Completed Build](docs/TUTORIAL-NEW-PROJECT-FROM-IDEA.md) - end-to-end greenfield guide from raw idea to completed MVP.
+- [Tutorial: First Feature](docs/TUTORIAL-FIRST-FEATURE.md) - complete walkthrough for one feature in a project.
 - [Using Grilling with Project Flow](docs/GRILLING-WITH-PROJECT-FLOW.md) - where `grill-me` and `grill-with-docs` fit.
 - [Improvement Loop](docs/IMPROVEMENT-LOOP.md) - how to evolve the workflow over time.
 
