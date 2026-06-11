@@ -34,12 +34,14 @@ Extension commands that immediately send a full project-flow prompt:
 - `/pf-status` - show git/beads/WorkGraph status widget.
 - `/pf-spec <feature-or-goal>` - create/refine `docs/specs/<feature>/spec.md`.
 - `/pf-plan <feature>` - create `docs/specs/<feature>/plan.md`.
+- `/pf-grill <feature-or-plan>` - stress-test a spec/plan with the `grill-me` skill.
+- `/pf-grill-docs <feature-or-plan>` - stress-test against `CONTEXT.md`/ADRs with the `grill-with-docs` skill and update docs as decisions crystallize.
 - `/pf-tasks <feature>` - create beads tasks/dependencies from spec+plan.
 - `/pf-execute [issue-id-or-goal]` - execute one slice, using WorkGraph when useful.
 - `/pf-review [feature-or-issue]` - review current changes.
 - `/pf-handoff [feature-or-issue]` - write compact handoff/progress notes.
 
-Prompt templates are also included as `/flow-spec`, `/flow-plan`, `/flow-tasks`, `/flow-execute`, `/flow-review`, and `/flow-handoff`.
+Prompt templates are also included as `/flow-spec`, `/flow-grill`, `/flow-grill-docs`, `/flow-plan`, `/flow-tasks`, `/flow-execute`, `/flow-review`, and `/flow-handoff`.
 
 ## Agent tools
 
@@ -65,12 +67,24 @@ Use `--beads` to run `bd init` if needed.
 ```text
 /pf-init --beads
 /pf-spec add OAuth login
+/pf-grill-docs oauth-login
 /pf-plan oauth-login
+/pf-grill-docs docs/specs/oauth-login/plan.md
 /pf-tasks oauth-login
 /pf-execute
 /pf-review
 /pf-handoff
 ```
+
+## Documentation
+
+Start here if you are new to the stack:
+
+- [Beginner Guide](docs/BEGINNER-GUIDE.md) - what each component does and the first-session flow.
+- [Component Reference](docs/COMPONENTS.md) - Pi, project-flow, WorkGraph, beads, git/tests, and grill skills.
+- [Tutorial: First Feature](docs/TUTORIAL-FIRST-FEATURE.md) - complete walkthrough from idea to handoff.
+- [Using Grilling with Project Flow](docs/GRILLING-WITH-PROJECT-FLOW.md) - where `grill-me` and `grill-with-docs` fit.
+- [Improvement Loop](docs/IMPROVEMENT-LOOP.md) - how to evolve the workflow over time.
 
 ## WorkGraph relationship
 

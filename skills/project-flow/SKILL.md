@@ -11,12 +11,14 @@ Use this workflow for non-trivial coding work. The goal is durable project memor
 
 1. **Status**: call `project_flow_status` when available; otherwise inspect `git status`, `bd ready --json`, `.pi/workgraph/plans/`, `CONTEXT.md`, `docs/adr/`, and `docs/specs/`.
 2. **Spec**: capture intent in `docs/specs/<feature>/spec.md`.
-3. **Plan**: capture architecture and constraints in `docs/specs/<feature>/plan.md`.
-4. **Tasks**: create durable beads issues with dependencies and acceptance criteria.
-5. **Execute**: work one independently verifiable slice at a time. Use WorkGraph for multi-step/multi-agent waves.
-6. **Verify**: run focused tests plus `scripts/verify.ps1` or `scripts/verify.sh` when present.
-7. **Commit**: commit clean increments with the beads issue ID.
-8. **Handoff**: update beads and write compact progress notes before stopping.
+3. **Grill intent**: use `grill-me` for conceptual stress-testing, or `grill-with-docs` when domain language/ADRs should be updated.
+4. **Plan**: capture architecture and constraints in `docs/specs/<feature>/plan.md`.
+5. **Grill design**: challenge the plan before creating tasks, especially for irreversible architecture or domain decisions.
+6. **Tasks**: create durable beads issues with dependencies and acceptance criteria.
+7. **Execute**: work one independently verifiable slice at a time. Use WorkGraph for multi-step/multi-agent waves.
+8. **Verify**: run focused tests plus `scripts/verify.ps1` or `scripts/verify.sh` when present.
+9. **Commit**: commit clean increments with the beads issue ID.
+10. **Handoff**: update beads and write compact progress notes before stopping.
 
 ## Spec format
 
@@ -42,6 +44,16 @@ Use this workflow for non-trivial coding work. The goal is durable project memor
 - Verification strategy
 - Migration / rollback concerns
 - Risks and trade-offs
+
+## Grilling checkpoints
+
+Use grilling to prevent expensive wrong turns.
+
+- Use **grill-me** after `/pf-spec` when the idea is fuzzy or has many product/design branches.
+- Use **grill-with-docs** when the feature touches domain language, business rules, context boundaries, or architecture decisions.
+- Grill before `/pf-tasks`; tasks created from an unchallenged plan encode mistakes into the task graph.
+- Ask one question at a time. Do not implement during grilling.
+- Capture resolved decisions immediately: glossary terms in `CONTEXT.md`, hard-to-reverse trade-offs in ADRs, feature decisions in spec/plan files.
 
 ## Task rules
 

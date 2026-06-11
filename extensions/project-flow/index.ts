@@ -209,6 +209,20 @@ export default function (pi: ExtensionAPI) {
     },
   });
 
+  pi.registerCommand("pf-grill", {
+    description: "Stress-test a project-flow spec/plan with the grill-me skill",
+    handler: async (args, ctx) => {
+      sendOrWarn(pi, ctx, `Use the grill-me skill to stress-test this project-flow plan/spec: ${args}\n\nContext:\n- If docs/specs/<feature>/spec.md or plan.md exists, read it first.\n- If the answer can be found by inspecting the codebase, inspect the codebase instead of asking me.\n- Ask one question at a time.\n- For each question, include your recommended answer.\n- Focus on hidden assumptions, missing acceptance criteria, risky dependencies, sequencing, and verification gaps.\n- Do not implement code during the grilling session.`);
+    },
+  });
+
+  pi.registerCommand("pf-grill-docs", {
+    description: "Stress-test a spec/plan against CONTEXT.md and ADRs, updating docs as decisions crystallize",
+    handler: async (args, ctx) => {
+      sendOrWarn(pi, ctx, `Use the grill-with-docs skill with the project-flow workflow for: ${args}\n\nContext:\n- Read CONTEXT.md, CONTEXT-MAP.md if present, docs/adr/, and docs/specs/<feature>/spec.md / plan.md if present.\n- Challenge terminology against the project glossary.\n- Ask one question at a time and wait for my answer.\n- If a term is resolved, update CONTEXT.md inline.\n- If a durable architectural decision meets ADR criteria, offer to create an ADR.\n- After grilling, update the relevant spec/plan with clarified decisions and open questions.\n- Do not implement code during the grilling session.`);
+    },
+  });
+
   pi.registerCommand("pf-tasks", {
     description: "Convert a spec/plan into beads issues and dependencies",
     handler: async (args, ctx) => {
