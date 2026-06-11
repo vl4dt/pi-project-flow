@@ -107,6 +107,64 @@ function summarizeStatus(s: ReturnType<typeof collectStatus>) {
   ].join("\n");
 }
 
+function summarizeStatusColored(s: ReturnType<typeof collectStatus>, theme: any) {
+  const readyCount = Array.isArray(s.beads.ready) ? s.beads.ready.length : undefined;
+  const wg = s.workgraph.latestPlan as any;
+
+  // Build lines with colored status indicators
+  const lines: string[] = [];
+
+  // Title
+  lines.push(theme.bold("Project Flow"));
+
+  // CWD
+  lines.push(`cwd: ${theme.fg("muted", s.cwd)}`);
+
+  // Git status
+  const gitStatus = s.git.ok ? "ok" : "not git?";
+  const gitColor = s.git.ok ? "success" : "error";
+  lines.push(`git: ${theme.fg(gitColor, gitStatus)}`);
+
+  // Dirty
+  const dirtyVal = s.git.status ? "yes" : "no";
+  const dirtyColor = s.git.status ? "warning" : "success";
+  lines.push(`dirty: ${theme.fg(dirtyColor, dirtyVal)}`);
+
+  // Beads
+  if (s.beads.available) {
+    const bdInfo = readyCount !== undefined ? `ready=${readyCount}` : "ok";
+    lines.push(`beads: ${theme.fg("success", bdInfo)}`);
+  } else {
+    lines.push(`beads: ${theme.fg("warning", "missing/uninit")}`);
+  }
+
+  // WorkGraph
+  if (wg?.id) {
+    const statusColor = wg.status === "done" ? "success" : wg.status === "failed" ? "error" : "accent";
+    lines.push(`workgraph: ${theme.fg("accent", wg.id)} (${theme.fg(statusColor, wg.status)})`);
+  } else {
+    lines.push(`workgraph: ${theme.fg("muted", "none")}`);
+  }
+
+  // Docs
+  const docsParts = [
+    `AGENTS=${s.files.agents ? theme.fg("success", "✓") : theme.fg("error", "✗")}`,
+    `CONTEXT=${s.files.context ? theme.fg("success", "✓") : theme.fg("error", "✗")}`,
+    `specs=${s.files.specsDir ? theme.fg("success", "✓") : theme.fg("error", "✗")}`,
+    `adr=${s.files.adrDir ? theme.fg("success", "✓") : theme.fg("error", "✗")}`,
+  ];
+  lines.push(`docs: ${docsParts.join(" ")}`);
+
+  // Verify scripts
+  const verifyParts = [
+    `ps1=${s.files.verifyPs1 ? theme.fg("success", "✓") : theme.fg("error", "✗")}`,
+    `sh=${s.files.verifySh ? theme.fg("success", "✓") : theme.fg("error", "✗")}`,
+  ];
+  lines.push(`verify: ${verifyParts.join(" ")}`);
+
+  return lines;
+}
+
 const AGENTS = `# Agentic Project Flow\n\nFor non-trivial work, use the project-flow workflow:\n\n1. Read CONTEXT.md and relevant docs/adr/ records.\n2. Clarify intent in docs/specs/<feature>/spec.md before implementation.\n3. Translate the spec into docs/specs/<feature>/plan.md with architecture, constraints, risks, and verification.\n4. Break the plan into small independently verifiable tasks in beads (bd), with dependencies and acceptance criteria.\n5. Use WorkGraph for multi-step or multi-agent execution waves.\n6. Work one vertical slice at a time.\n7. Run scripts/verify.ps1 or scripts/verify.sh before marking work done when present.\n8. Commit with the beads issue ID in the message.\n9. Update beads and handoff/progress notes before stopping.\n\nNever mark work done without evidence: tests, build output, lint/typecheck, browser automation, or an explicit acceptance checklist.\nDo not rely on chat history as project memory.\n`;
 
 const CONTEXT = `# Project Context\n\n## Purpose\n\nDescribe what this project is for and who it serves.\n\n## Domain language\n\n- Term: Meaning\n\n## Architecture map\n\n- Area: Files/modules and responsibilities\n\n## Commands\n\n- Install:\n- Run:\n- Test:\n- Verify:\n\n## Non-obvious gotchas\n\n- \n`;
@@ -120,16 +178,24 @@ function sendOrWarn(pi: ExtensionAPI, ctx: any, prompt: string) {
   }
 }
 
+function updateStatusBar(ctx: any) {
+  try {
+    const s = collectStatus(ctx.cwd);
+    const ready = Array.isArray(s.beads.ready) ? s.beads.ready.length : "?";
+    const dirty = s.git.status ? "dirty" : "clean";
+    ctx.ui.setStatus("project-flow", `pf ${dirty} bd:${s.beads.available ? ready : "-"}`);
+  } catch {
+    // best effort only
+  }
+}
+
 export default function (pi: ExtensionAPI) {
   pi.on("session_start", async (_event, ctx) => {
-    try {
-      const s = collectStatus(ctx.cwd);
-      const ready = Array.isArray(s.beads.ready) ? s.beads.ready.length : "?";
-      const dirty = s.git.status ? "dirty" : "clean";
-      ctx.ui.setStatus("project-flow", `pf ${dirty} bd:${s.beads.available ? ready : "-"}`);
-    } catch {
-      // best effort only
-    }
+    updateStatusBar(ctx);
+  });
+
+  pi.on("turn_end", async (_event, ctx) => {
+    updateStatusBar(ctx);
   });
 
   pi.registerTool({
@@ -190,7 +256,8 @@ export default function (pi: ExtensionAPI) {
     description: "Show git/beads/WorkGraph project-flow status",
     handler: async (_args, ctx) => {
       const s = collectStatus(ctx.cwd);
-      ctx.ui.setWidget("project-flow-status", summarizeStatus(s).split("\n"));
+      const lines = summarizeStatusColored(s, ctx.ui.theme);
+      ctx.ui.setWidget("project-flow-status", lines);
       ctx.ui.notify("Project Flow status shown", "info");
     },
   });
