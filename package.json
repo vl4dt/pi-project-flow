@@ -1,0 +1,29 @@
+{
+  "name": "pi-project-flow",
+  "version": "0.1.0",
+  "description": "Pi package for spec-first, beads-backed, WorkGraph-executed agentic coding project flow.",
+  "type": "module",
+  "keywords": ["pi-package", "pi", "agentic-coding", "project-management", "workgraph", "beads"],
+  "license": "MIT",
+  "author": "vl4dt",
+  "files": ["extensions", "skills", "prompts", "docs", "README.md", "LICENSE"],
+  "pi": {
+    "extensions": ["./extensions/project-flow/index.ts"],
+    "skills": ["./skills"],
+    "prompts": ["./prompts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "latest",
+    "@types/node": "latest",
+    "typescript": "latest",
+    "typebox": "latest"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "pack:local": "npm pack"
+  }
+}
